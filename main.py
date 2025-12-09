@@ -1,16 +1,10 @@
 from fastapi import FastAPI, Request
 import requests
 import os
-from openai import OpenAI
 
 app = FastAPI()
 
-# Tokenurile sunt citite din variabilele de mediu Railway
 TELEGRAM_TOKEN = os.getenv("8544231370:AAH1hR98A_NqzEnWH4nIL2yfzHorFsVNGzQ")
-OPENAI_API_KEY = os.getenv("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")
-
-# Inițializează clientul OpenAI
-client = OpenAI(api_key=OPENAI_API_KEY)
 
 def send_message(chat_id: int, text: str):
     """Trimite mesaj înapoi către Telegram chat."""
@@ -20,7 +14,7 @@ def send_message(chat_id: int, text: str):
 @app.get("/")
 def home():
     """Endpoint simplu pentru test în browser."""
-    return {"status": "Bot backend is running"}
+    return {"status": "Telegram bot backend is running"}
 
 @app.post("/")
 async def webhook(req: Request):
@@ -33,18 +27,8 @@ async def webhook(req: Request):
     chat_id = message["chat"]["id"]
     user_text = message.get("text", "")
 
-    ai_response = call_ai(user_text)
-    send_message(chat_id, ai_response)
-    return {"ok": True}
+    # Răspuns simplu, fără AI
+    reply = f"Am primit mesajul tău: {user_text}"
+    send_message(chat_id, reply)
 
-def call_ai(prompt: str) -> str:
-    """Generează răspuns folosind OpenAI Chat API."""
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",  # sau "gpt-4o" / "gpt-4.1" dacă ai acces
-        messages=[
-            {"role": "system", "content": "Ești un agent conversațional util și concis."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.7,
-    )
-    return response.choices[0].message.content
+    return {"ok": True}
