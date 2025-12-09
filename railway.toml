@@ -1,0 +1,3 @@
+# railway.toml (opțional)
+[service]
+port = 8000
